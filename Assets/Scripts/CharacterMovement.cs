@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class CharacterMovement : MonoBehaviour
 {
@@ -24,6 +25,7 @@ public class CharacterMovement : MonoBehaviour
     private Rigidbody _rb;
     private Vector3 _moveInput;
     private Vector3 _lookDirection;
+    private NavMeshAgent _navMeshAgent;
 
     public bool IsGrounded { get; private set; }
     public Vector3 MoveInput => _moveInput;
@@ -36,6 +38,10 @@ public class CharacterMovement : MonoBehaviour
         _rb.useGravity = false;
         _rb.constraints = RigidbodyConstraints.FreezeRotation;
         _rb.interpolation = RigidbodyInterpolation.Interpolate;
+
+        _navMeshAgent = GetComponent<NavMeshAgent>();
+        _navMeshAgent.updatePosition = false;
+        _navMeshAgent.updateRotation = false;
     }
 
     public void TryJump()
@@ -54,9 +60,33 @@ public class CharacterMovement : MonoBehaviour
         _moveInput = input;
     }
 
+    public void MoveTo(Vector3 position, float stoppingDistance = 0.5f)
+    {
+        float distance = Vector3.Distance(position, transform.position);
+        if (distance < stoppingDistance) StopMovement();
+        else _navMeshAgent.SetDestination(position);
+    }
+
+    public void StopMovement()
+    {
+        _navMeshAgent.ResetPath();
+        SetMoveInput(Vector3.zero);
+    }
+
     private void Update()
     {
         IsGrounded = CheckGrounded();
+
+        // check if NavMeshAgent has a path
+        if (_navMeshAgent.hasPath)
+        {
+            // get the next point on the path
+            Vector3 next = _navMeshAgent.path.corners[1];
+            Vector3 direction = (next - transform.position).normalized;
+            // set move/look direction towards next point
+            SetMoveInput(direction);
+            SetLookDirection(direction);
+        }
 
         // Quaternion.LookRotation turns a Vector3 (direction) into a Quaternion (rotation)
         Quaternion targetRotation = Quaternion.LookRotation(_lookDirection);
