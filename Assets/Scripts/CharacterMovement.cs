@@ -26,6 +26,9 @@ public class CharacterMovement : MonoBehaviour
     private Vector3 _lookDirection;
 
     public bool IsGrounded { get; private set; }
+    public Vector3 MoveInput => _moveInput;
+    // Converts world-space _moveInput to local space direction
+    public Vector3 LocalMoveInput => transform.InverseTransformDirection(_moveInput);
 
     private void Awake()
     {
