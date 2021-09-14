@@ -187,6 +187,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2632004852294097577, guid: 82ab4b29035d2444a98d57d1dd37f827, type: 3}
+      propertyPath: _occlusionMask.m_Bits
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3488620602552403437, guid: 82ab4b29035d2444a98d57d1dd37f827, type: 3}
       propertyPath: m_Name
       value: Enemy
@@ -234,10 +238,6 @@ PrefabInstance:
     - target: {fileID: 4260899309417832279, guid: 82ab4b29035d2444a98d57d1dd37f827, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7172988671629330168, guid: 82ab4b29035d2444a98d57d1dd37f827, type: 3}
-      propertyPath: _speed
-      value: 3.5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 82ab4b29035d2444a98d57d1dd37f827, type: 3}
