@@ -42,6 +42,8 @@ public class CharacterMovement : MonoBehaviour
         _navMeshAgent = GetComponent<NavMeshAgent>();
         _navMeshAgent.updatePosition = false;
         _navMeshAgent.updateRotation = false;
+
+        _lookDirection = transform.forward;
     }
 
     public void TryJump()

@@ -22,12 +22,20 @@
                     "interactions": ""
                 },
                 {
-                    "name": "Fire",
+                    "name": "FireStart",
                     "type": "Button",
                     "id": "6050746d-f504-4bd4-ab33-73a462a833f5",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": ""
+                    "interactions": "Press"
+                },
+                {
+                    "name": "FireStop",
+                    "type": "Button",
+                    "id": "b4222bc4-949c-48e5-8804-f102971c7b84",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "Press(behavior=1)"
                 },
                 {
                     "name": "Jump",
@@ -211,7 +219,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";Gamepad",
-                    "action": "Fire",
+                    "action": "FireStart",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -222,7 +230,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
-                    "action": "Fire",
+                    "action": "FireStart",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -233,7 +241,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";Touch",
-                    "action": "Fire",
+                    "action": "FireStart",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -244,7 +252,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Joystick",
-                    "action": "Fire",
+                    "action": "FireStart",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -255,7 +263,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "XR",
-                    "action": "Fire",
+                    "action": "FireStart",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -278,6 +286,61 @@
                     "processors": "",
                     "groups": "Gamepad",
                     "action": "Jump",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "f01a6166-4a21-4f83-8921-769a62576260",
+                    "path": "<Gamepad>/rightTrigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Gamepad",
+                    "action": "FireStop",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "59c760b6-fdb0-4c1d-a182-d7ef801d1829",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "FireStop",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b3e9a1a2-42cf-44d0-a6d7-cc747b68bcd2",
+                    "path": "<Touchscreen>/primaryTouch/tap",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Touch",
+                    "action": "FireStop",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "68039b8f-ff64-40f3-928d-1bb28cc748a0",
+                    "path": "<Joystick>/trigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Joystick",
+                    "action": "FireStop",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "0cd532e1-8511-4493-a283-a77034204bb9",
+                    "path": "<XRController>/{PrimaryAction}",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "XR",
+                    "action": "FireStop",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
