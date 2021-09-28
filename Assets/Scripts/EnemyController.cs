@@ -13,19 +13,111 @@ public class EnemyController : MonoBehaviour
     [SerializeField] private float _viewDistance = 10f;
     [SerializeField] private float _viewHalfAngle = 45;
 
+    [Header("States")]
+    [SerializeField] private float _patrolPointReachedDistance = 1f;
+    [SerializeField] private string _currentStateName;
+
     private CharacterMovement _characterMovement;
     private Targetable _target;
     private Targetable _myTargetable;
+    private Weapon _weapon;
+    private PatrolPoint[] _patrolPoints;
+    private IEnumerator _currentState;
 
     public bool IsTargetValid => _target != null && _target.IsTargetable;
+    public float TargetDistance => Vector3.Distance(_target.AimPosition.position, _myTargetable.AimPosition.position);
 
     private void Start()
     {
         _characterMovement = GetComponent<CharacterMovement>();
         _myTargetable = GetComponent<Targetable>();
+        _weapon = GetComponentInChildren<Weapon>();
+
+        _patrolPoints = FindObjectsOfType<PatrolPoint>();
+        NextState(PatrolState());
     }
 
-    private void Update()
+    private PatrolPoint GetRandomPatrolPoint()
+    {
+        return _patrolPoints[Random.Range(0, _patrolPoints.Length)];
+    }
+
+    private void NextState(IEnumerator nextState)
+    {
+        if (_currentState != null) StopCoroutine(_currentState);
+
+        _currentState = nextState;
+        _currentStateName = nextState.ToString();
+        StartCoroutine(_currentState);
+    }
+
+    private IEnumerator PatrolState()
+    {
+        PatrolPoint patrolPoint = GetRandomPatrolPoint();
+
+        while(true)
+        {
+            float patrolDistance = Vector3.Distance(transform.position, patrolPoint.transform.position);
+            if (patrolDistance < +_patrolPointReachedDistance) patrolPoint = GetRandomPatrolPoint();
+
+            _characterMovement.MoveTo(patrolPoint.transform.position);
+            Debug.DrawLine(transform.position, patrolPoint.transform.position);
+
+            // Find target and chase
+            TryFindTarget();
+            if (IsTargetValid) NextState(ChaseState());
+
+            yield return null;
+        }
+    }
+
+    private IEnumerator ChaseState()
+    {
+        while(IsTargetValid)
+        {
+            // chase target while out of range or LoS (line of sight)
+            if (TargetDistance > _attackDistance || !TestVisibility(_target.AimPosition.position))
+            {
+                _characterMovement.MoveTo(_target.AimPosition.position);
+            }
+            else
+            {
+                // enter attack state
+                NextState(AttackState());
+            }
+
+            yield return null;
+        }
+
+        NextState(PatrolState());
+    }
+
+    private IEnumerator AttackState()
+    {
+        while(IsTargetValid)
+        {
+            if(TargetDistance < _attackDistance && TestVisibility(_target.AimPosition.position))
+            {
+                Vector3 dirToTarget = (_target.AimPosition.position - _myTargetable.AimPosition.position).normalized;
+                _characterMovement.SetLookDirection(dirToTarget);
+                _characterMovement.StopMovement();
+                Debug.DrawLine(_target.AimPosition.position, _myTargetable.AimPosition.position, Color.red);
+
+                _weapon.TryFire(_target.AimPosition.position, _myTargetable.Team);
+            }
+            else
+            {
+                NextState(ChaseState());
+            }
+
+            yield return null;
+        }
+
+        // fallback to patrol state
+        NextState(PatrolState());
+    }
+
+    private void UpdatedaaergsergsetawWFqrCQEf()
     {
         if (!IsTargetValid) TryFindTarget();
 

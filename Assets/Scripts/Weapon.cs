@@ -9,8 +9,13 @@ public class Weapon : MonoBehaviour
     [SerializeField] private float _range = 20f;
     [SerializeField] private LayerMask _hitMask;
 
+    private float _lastFireTime;
+
     public void TryFire(Vector3 aimPosition, int myTeam)
     {
+        if (Time.time < _lastFireTime + 1f / _roundsPerMinute) return;
+        _lastFireTime = Time.time;
+
         Vector3 aimDirection = (aimPosition - transform.position).normalized;
         Vector3 start = transform.position;
 
