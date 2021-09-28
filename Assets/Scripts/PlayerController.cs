@@ -43,6 +43,21 @@ public class PlayerController : MonoBehaviour
         _isFiring = false;
     }
 
+    public void OnDash()
+    {
+        _movement.TryDash();
+    }
+
+    public void OnSprintStart()
+    {
+        _movement.IsSprinting = true;
+    }
+
+    public void OnSprintStop()
+    {
+        _movement.IsSprinting = false;
+    }
+
     private void Update()
     {
         // cross product to find out where the camera is facing

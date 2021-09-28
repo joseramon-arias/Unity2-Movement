@@ -15,12 +15,23 @@ public class CharacterMovement : MonoBehaviour
     [SerializeField] private float _jumpHeight = 2;
     [SerializeField] private float _gravity = 20f;
     [SerializeField] private float _airControl = 0.1f;
+    [SerializeField] private int _totalJumps = 2;
+    private int _jumpCounter = 0;
 
     [Header("Grounding")]
     [SerializeField] private float _groundCheckRadius = 0.25f;
     [SerializeField] private float _groundCheckOffset = 0.5f;
     [SerializeField] private float _groundCheckDistance = 0.4f;
     [SerializeField] private LayerMask _groundCheckMask;
+
+    [Header("Dashing")]
+    [SerializeField] private float _dashSpeed = 1000f;
+    [SerializeField] private float _dashCooldown = 0.5f;
+    private bool _dashReady = true;
+
+    [Header("Sprinting")]
+    [SerializeField] private float _sprintSpeed = 8f;
+    public bool IsSprinting { private get; set; }
 
     private Rigidbody _rb;
     private Vector3 _moveInput;
@@ -31,6 +42,7 @@ public class CharacterMovement : MonoBehaviour
     public Vector3 MoveInput => _moveInput;
     // Converts world-space _moveInput to local space direction
     public Vector3 LocalMoveInput => transform.InverseTransformDirection(_moveInput);
+
 
     private void Awake()
     {
@@ -48,13 +60,49 @@ public class CharacterMovement : MonoBehaviour
 
     public void TryJump()
     {
-        if (!IsGrounded) return;
+        // If the player is grounded or still have jumps available, jump
+        if (IsGrounded || _jumpCounter < _totalJumps)
+        {
+            float jumpVelocity = Mathf.Sqrt(2f * _gravity * _jumpHeight);
+            // override vertical velocity
+            Vector3 velocity = _rb.velocity;
+            velocity.y = jumpVelocity;
+            _jumpCounter += 1;
+            _rb.velocity = velocity;
+        }
+    }
 
-        float jumpVelocity = Mathf.Sqrt(2f * _gravity * _jumpHeight);
-        // override vertical velocity
-        Vector3 velocity = _rb.velocity;
-        velocity.y = jumpVelocity;
-        _rb.velocity = velocity;
+    public void TryDash()
+    {
+        if (_dashReady)
+        {
+            // If the player is not moving, dash forward
+            if (_moveInput == Vector3.zero)
+            {
+                _rb.AddForce(transform.forward * _dashSpeed);
+            }
+            // if the player is moving, dash towards the moving direction
+            else
+            {
+                _rb.AddForce(_moveInput.normalized * _dashSpeed);
+            }
+
+            StartCoroutine(CountDashCooldown());
+        }
+    }
+
+    private IEnumerator CountDashCooldown()
+    {
+        // Deactivate dash until _dashCooldown time is up, and then reactivate it again
+        float currentCooldown = _dashCooldown;
+        _dashReady = false;
+        while (currentCooldown > 0)
+        {
+            currentCooldown -= Time.deltaTime;
+            yield return null;
+        }
+
+        _dashReady = true;
     }
 
     public void SetMoveInput(Vector3 input)
@@ -77,7 +125,10 @@ public class CharacterMovement : MonoBehaviour
 
     private void Update()
     {
+        bool WasNotGrounded = !IsGrounded;
         IsGrounded = CheckGrounded();
+
+        if (WasNotGrounded && IsGrounded) _jumpCounter = 0;
 
         // check if NavMeshAgent has a path
         if (_navMeshAgent.hasPath)
@@ -100,9 +151,11 @@ public class CharacterMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        // calculate desired and current velocities, and difference between them
-        Vector3 targetVelocity = _moveInput * _speed;
+        // If player is sprinting, use _sprintSpeed; else, use speed
+        float newSpeed = IsSprinting ? _sprintSpeed : _speed;
+        Vector3 targetVelocity = _moveInput * newSpeed;
         Vector3 currentVelocity = _rb.velocity;
+        // calculate desired and current velocities, and difference between them
         Vector3 velocityDiff = targetVelocity - currentVelocity;
         velocityDiff.y = 0;
 
