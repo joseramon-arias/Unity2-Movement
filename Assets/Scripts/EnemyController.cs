@@ -117,31 +117,6 @@ public class EnemyController : MonoBehaviour
         NextState(PatrolState());
     }
 
-    private void UpdatedaaergsergsetawWFqrCQEf()
-    {
-        if (!IsTargetValid) TryFindTarget();
-
-        if (!IsTargetValid)
-        {
-            _characterMovement.StopMovement();
-            return;
-        }
-
-        float targetDistance = Vector3.Distance(transform.position, _target.transform.position);
-        bool targetVisible = TestVisibility(_target.AimPosition.position);
-
-        if (targetDistance > _attackDistance || !targetVisible)
-        {
-            _characterMovement.MoveTo(_target.transform.position);
-        }
-        else
-        {
-            _characterMovement.StopMovement();
-            Vector3 targetDirection = (_target.transform.position - transform.position).normalized;
-            _characterMovement.SetLookDirection(targetDirection);
-        }
-    }
-
     private bool TestVisibility(Vector3 targetPosition)
     {
         Vector3 start = _myTargetable.AimPosition.position;
@@ -188,5 +163,10 @@ public class EnemyController : MonoBehaviour
                 break;
             }
         }
+    }
+
+    private void OnDisable()
+    {
+        StopAllCoroutines();
     }
 }
