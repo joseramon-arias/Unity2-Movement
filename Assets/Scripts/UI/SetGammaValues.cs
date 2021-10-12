@@ -15,7 +15,6 @@ public class SetGammaValues : MonoBehaviour
         {
             float currentGamma = liftGammaGain.gamma.value.x;
             slider.SetValueWithoutNotify(currentGamma);
-            Debug.Log($"Gamma loaded: {currentGamma}");
         }
     }
 
